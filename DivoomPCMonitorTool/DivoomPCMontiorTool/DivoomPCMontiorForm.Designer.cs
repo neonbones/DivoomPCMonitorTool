@@ -54,6 +54,7 @@ namespace DivoomPCMontiorTool
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.refreshList = new System.Windows.Forms.Button();
             this.CpuUse = new System.Windows.Forms.TextBox();
             this.CpuTemp = new System.Windows.Forms.TextBox();
@@ -66,117 +67,118 @@ namespace DivoomPCMontiorTool
             this.LCDMsg = new System.Windows.Forms.Label();
             this.DeviceListMsg = new System.Windows.Forms.Label();
             this.HardwareInfo = new System.Windows.Forms.Label();
+            this.timer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
-
             // 
-            // DeviceListMsg
+            // refreshList
             // 
-            this.DeviceListMsg.Location = new System.Drawing.Point(100, 10);
-            this.DeviceListMsg.Name = "DeviceListMsg";
-            this.DeviceListMsg.Size = new System.Drawing.Size(100, 20);
-            this.DeviceListMsg.Text = "Device list";
-            // 
-            // listbox
-            // 
-            this.divoomList.Location = new System.Drawing.Point(100, 30);
-            this.divoomList.Name = "DeviceList";
-            this.divoomList.Size = new System.Drawing.Size(100, 230);
-            this.divoomList.TabIndex = 2;//CheckedListBoxes
-            this.divoomList.SelectedIndexChanged += new System.EventHandler(this.DivoomList_SelectedIndexChanged);
-            // 
-            // refresh list
-            // 
-            this.refreshList.Location = new System.Drawing.Point(100, 260);
-            this.refreshList.Name = "refresh list";
-            this.refreshList.Size = new System.Drawing.Size(100, 23);
+            this.refreshList.Location = new System.Drawing.Point(206, 288);
+            this.refreshList.Name = "refreshList";
+            this.refreshList.Size = new System.Drawing.Size(100, 25);
             this.refreshList.TabIndex = 0;
-            this.refreshList.Text = "refresh list";
+            this.refreshList.Text = "Refresh";
             this.refreshList.UseVisualStyleBackColor = true;
             this.refreshList.Click += new System.EventHandler(this.RefreshList_Click);
-
-            // 
-            // LCDMsg
-            // 
-            this.LCDMsg.Location = new System.Drawing.Point(20, 10);
-            this.LCDMsg.Name = "DeviceListMsg";
-            this.LCDMsg.Size = new System.Drawing.Size(80, 20);
-            this.LCDMsg.Text = "Select LCD";
-            // LCDList
-            // 
-            this.LCDList.Location = new System.Drawing.Point(20, 30);
-            this.LCDList.Name = "LCDList";
-            this.LCDList.Size = new System.Drawing.Size(20, 100);
-            this.LCDList.TabIndex = 2;//CheckedListBoxes
-            this.LCDList.SelectedIndexChanged += new System.EventHandler(this.LCDList_SelectedIndexChanged);
-            this.LCDList.Items.Add("1");
-            this.LCDList.Items.Add("2");
-            this.LCDList.Items.Add("3");
-            this.LCDList.Items.Add("4");
-            this.LCDList.Items.Add("5");
-            this.LCDList.SetSelected(0, true);
-
-
-            // 
-            // HardwareInfo
-            // 
-            this.HardwareInfo.Location = new System.Drawing.Point(220, 10);
-            this.HardwareInfo.Name = "HardwareInfo";
-            this.HardwareInfo.Size = new System.Drawing.Size(180, 20);
-            this.HardwareInfo.Text = "Hardware information";
-
             // 
             // CpuUse
             // 
-            this.CpuUse.Location = new System.Drawing.Point(220, 30);
-            this.CpuUse.Name = "PCUser";
+            this.CpuUse.Location = new System.Drawing.Point(206, 32);
+            this.CpuUse.Name = "CpuUse";
             this.CpuUse.Size = new System.Drawing.Size(100, 20);
             this.CpuUse.TabIndex = 1;
             // 
-
             // CpuTemp
             // 
-            this.CpuTemp.Location = new System.Drawing.Point(220, 60);
-            this.CpuTemp.Name = "textBox1";
+            this.CpuTemp.Location = new System.Drawing.Point(206, 65);
+            this.CpuTemp.Name = "CpuTemp";
             this.CpuTemp.Size = new System.Drawing.Size(100, 20);
             this.CpuTemp.TabIndex = 1;
-
             // 
-            // CpuUse
+            // GpuUse
             // 
-            this.GpuUse.Location = new System.Drawing.Point(220, 90);
-            this.GpuUse.Name = "PCUser";
+            this.GpuUse.Location = new System.Drawing.Point(206, 98);
+            this.GpuUse.Name = "GpuUse";
             this.GpuUse.Size = new System.Drawing.Size(100, 20);
             this.GpuUse.TabIndex = 1;
             // 
-
-            // CpuTemp
+            // GpuTemp
             // 
-            this.GpuTemp.Location = new System.Drawing.Point(220, 120);
-            this.GpuTemp.Name = "textBox1";
+            this.GpuTemp.Location = new System.Drawing.Point(206, 130);
+            this.GpuTemp.Name = "GpuTemp";
             this.GpuTemp.Size = new System.Drawing.Size(100, 20);
             this.GpuTemp.TabIndex = 1;
-
-
-            // CpuTemp
             // 
-            this.DispUse.Location = new System.Drawing.Point(220, 150);
-            this.DispUse.Name = "textBox1";
+            // DispUse
+            // 
+            this.DispUse.Location = new System.Drawing.Point(206, 162);
+            this.DispUse.Name = "DispUse";
             this.DispUse.Size = new System.Drawing.Size(100, 20);
             this.DispUse.TabIndex = 1;
-
-
-            // CpuTemp
             // 
-            this.HddUse.Location = new System.Drawing.Point(220, 180);
-            this.HddUse.Name = "textBox1";
+            // HddUse
+            // 
+            this.HddUse.Location = new System.Drawing.Point(206, 188);
+            this.HddUse.Name = "HddUse";
             this.HddUse.Size = new System.Drawing.Size(100, 20);
             this.HddUse.TabIndex = 1;
-
-            // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            // divoomList
+            // 
+            this.divoomList.Location = new System.Drawing.Point(100, 32);
+            this.divoomList.Name = "divoomList";
+            this.divoomList.Size = new System.Drawing.Size(100, 238);
+            this.divoomList.TabIndex = 2;
+            this.divoomList.SelectedIndexChanged += new System.EventHandler(this.DivoomList_SelectedIndexChanged);
+            // 
+            // LCDList
+            // 
+            this.LCDList.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"});
+            this.LCDList.Location = new System.Drawing.Point(20, 32);
+            this.LCDList.Name = "LCDList";
+            this.LCDList.Size = new System.Drawing.Size(74, 238);
+            this.LCDList.TabIndex = 2;
+            this.LCDList.SelectedIndexChanged += new System.EventHandler(this.LCDList_SelectedIndexChanged);
+            // 
+            // LCDMsg
+            // 
+            this.LCDMsg.Location = new System.Drawing.Point(20, 11);
+            this.LCDMsg.Name = "LCDMsg";
+            this.LCDMsg.Size = new System.Drawing.Size(74, 22);
+            this.LCDMsg.TabIndex = 3;
+            this.LCDMsg.Text = "Select LCD";
+            // 
+            // DeviceListMsg
+            // 
+            this.DeviceListMsg.Location = new System.Drawing.Point(100, 11);
+            this.DeviceListMsg.Name = "DeviceListMsg";
+            this.DeviceListMsg.Size = new System.Drawing.Size(100, 22);
+            this.DeviceListMsg.TabIndex = 4;
+            this.DeviceListMsg.Text = "Devices";
+            // 
+            // HardwareInfo
+            // 
+            this.HardwareInfo.Location = new System.Drawing.Point(206, 11);
+            this.HardwareInfo.Name = "HardwareInfo";
+            this.HardwareInfo.Size = new System.Drawing.Size(100, 22);
+            this.HardwareInfo.TabIndex = 5;
+            this.HardwareInfo.Text = "Hardware";
+            // 
+            // timer
+            // 
+            this.timer.Enabled = true;
+            this.timer.Interval = 2000;
+            this.timer.Tick += new System.EventHandler(this.DivoomSendHttpInfo);
+            // 
+            // DivoomPCMontiorForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(400, 300);
+            this.ClientSize = new System.Drawing.Size(319, 325);
             this.Controls.Add(this.CpuUse);
             this.Controls.Add(this.CpuTemp);
             this.Controls.Add(this.GpuUse);
@@ -189,20 +191,11 @@ namespace DivoomPCMontiorTool
             this.Controls.Add(this.LCDMsg);
             this.Controls.Add(this.DeviceListMsg);
             this.Controls.Add(this.HardwareInfo);
-            System.AppDomain.CurrentDomain.ProcessExit += new System.EventHandler(CurrentDomain_ProcessExit);
-            this.Name = "DivoomPcTool";
+            this.Name = "DivoomPCMontiorForm";
             this.Text = "DivoomPcTool";
-            this.SelectLCDID = 0;
-            this.DeviceIPAddr = "";
-
-            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-            timer.Tick += new System.EventHandler(DivoomSendHttpInfo);
-            timer.Enabled = true;
-            timer.Interval = 2000;
-            timer.Start();
-
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
     }
 }

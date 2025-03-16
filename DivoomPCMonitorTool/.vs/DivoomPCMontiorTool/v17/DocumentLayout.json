@@ -7,16 +7,8 @@
       "RelativeMoniker": "D:0:0:{2B41C74A-956D-48E5-B424-8F839B211C8A}|DivoomPCMontiorTool\\DivoomPCMonitorTool.csproj|solutionrelative:divoompcmontiortool\\divoompcmontiorform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2B41C74A-956D-48E5-B424-8F839B211C8A}|DivoomPCMontiorTool\\DivoomPCMonitorTool.csproj|d:\\divoom\\divoompcmonitortool\\divoompcmonitortool\\divoompcmontiortool\\divoompcmontiorform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{2B41C74A-956D-48E5-B424-8F839B211C8A}|DivoomPCMontiorTool\\DivoomPCMonitorTool.csproj|D:\\Divoom\\DivoomPCMonitorTool\\DivoomPCMonitorTool\\divoompcmontiortool\\divoompcmontiorform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{2B41C74A-956D-48E5-B424-8F839B211C8A}|DivoomPCMontiorTool\\DivoomPCMonitorTool.csproj|solutionrelative:divoompcmontiortool\\divoompcmontiorform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2B41C74A-956D-48E5-B424-8F839B211C8A}|DivoomPCMontiorTool\\DivoomPCMonitorTool.csproj|D:\\Divoom\\DivoomPCMonitorTool\\DivoomPCMonitorTool\\divoompcmontiortool\\updatevisitor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2B41C74A-956D-48E5-B424-8F839B211C8A}|DivoomPCMontiorTool\\DivoomPCMonitorTool.csproj|solutionrelative:divoompcmontiortool\\updatevisitor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Divoom\\DivoomPCMonitorTool\\DivoomPCMonitorTool\\WindowsFormsApplication1\\DivoomPCMontiorForm.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:WindowsFormsApplication1\\DivoomPCMontiorForm.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\rusta\\AppData\\Local\\Temp\\.vsdbgsrc\\303c0774fd3b842ea37b81748ad5955875a980bd463619dbee847ec4dcebeaf8\\DivoomPCMontiorForm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
@@ -51,7 +43,7 @@
               "RelativeDocumentMoniker": "DivoomPCMontiorTool\\DivoomPCMontiorForm.cs",
               "ToolTip": "D:\\Divoom\\DivoomPCMonitorTool\\DivoomPCMonitorTool\\DivoomPCMontiorTool\\DivoomPCMontiorForm.cs",
               "RelativeToolTip": "DivoomPCMontiorTool\\DivoomPCMontiorForm.cs",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAABMAAAAwAAAA",
+              "ViewState": "AQIAAJsAAAAAAAAAAAAAAKoAAAAQAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-16T19:22:01.793Z",
               "IsPinned": true,
@@ -96,40 +88,17 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "UpdateVisitor.cs",
-              "DocumentMoniker": "D:\\Divoom\\DivoomPCMonitorTool\\DivoomPCMonitorTool\\DivoomPCMontiorTool\\UpdateVisitor.cs",
-              "RelativeDocumentMoniker": "DivoomPCMontiorTool\\UpdateVisitor.cs",
-              "ToolTip": "D:\\Divoom\\DivoomPCMonitorTool\\DivoomPCMonitorTool\\DivoomPCMontiorTool\\UpdateVisitor.cs",
-              "RelativeToolTip": "DivoomPCMontiorTool\\UpdateVisitor.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAIAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-16T19:45:51.081Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "DivoomPCMontiorForm.Designer.cs",
-              "DocumentMoniker": "D:\\Divoom\\DivoomPCMonitorTool\\DivoomPCMonitorTool\\WindowsFormsApplication1\\DivoomPCMontiorForm.Designer.cs",
-              "RelativeDocumentMoniker": "WindowsFormsApplication1\\DivoomPCMontiorForm.Designer.cs",
-              "ToolTip": "D:\\Divoom\\DivoomPCMonitorTool\\DivoomPCMonitorTool\\WindowsFormsApplication1\\DivoomPCMontiorForm.Designer.cs",
-              "RelativeToolTip": "WindowsFormsApplication1\\DivoomPCMontiorForm.Designer.cs",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-16T19:16:49.683Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
               "Title": "DivoomPCMontiorForm.cs",
               "DocumentMoniker": "C:\\Users\\rusta\\AppData\\Local\\Temp\\.vsdbgsrc\\303c0774fd3b842ea37b81748ad5955875a980bd463619dbee847ec4dcebeaf8\\DivoomPCMontiorForm.cs",
               "ToolTip": "C:\\Users\\rusta\\AppData\\Local\\Temp\\.vsdbgsrc\\303c0774fd3b842ea37b81748ad5955875a980bd463619dbee847ec4dcebeaf8\\DivoomPCMontiorForm.cs",
-              "ViewState": "AQIAAPsAAAAAAAAAAAAvwCQBAAATAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAMsAAAAKAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-16T19:15:14.061Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
               "Title": "DivoomPCMontiorForm.cs [Design]",
               "DocumentMoniker": "D:\\Divoom\\DivoomPCMonitorTool\\DivoomPCMonitorTool\\WindowsFormsApplication1\\DivoomPCMontiorForm.cs",
               "RelativeDocumentMoniker": "WindowsFormsApplication1\\DivoomPCMontiorForm.cs",
@@ -141,7 +110,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 4,
               "Title": "AssemblyInfo.cs",
               "DocumentMoniker": "D:\\Divoom\\DivoomPCMonitorTool\\DivoomPCMonitorTool\\WindowsFormsApplication1\\Properties\\AssemblyInfo.cs",
               "RelativeDocumentMoniker": "WindowsFormsApplication1\\Properties\\AssemblyInfo.cs",
@@ -152,7 +121,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Divoom\\DivoomPCMonitorTool\\DivoomPCMonitorTool\\WindowsFormsApplication1\\Program.cs",
               "RelativeDocumentMoniker": "WindowsFormsApplication1\\Program.cs",

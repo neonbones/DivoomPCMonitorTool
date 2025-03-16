@@ -8,219 +8,352 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Runtime.InteropServices;
 
-
 namespace DivoomPCMontiorTool
 {
     public partial class DivoomPCMontiorForm : Form
     {
+        // Constants for HTTP requests
+        private const string BASE_API_URL = "http://app.divoom-gz.com";
+        private const string DEVICE_LIST_ENDPOINT = "/Device/ReturnSameLANDevice";
+        private const string LCD_INFO_ENDPOINT = "/Channel/Get5LcdInfoV2";
+        private const string POST_ENDPOINT = "/post";
+        private const string HTTP_PROTOCOL = "http://";
+        private const string HTTP_PORT = ":80";
+        private const int HTTP_TIMEOUT = 1000;
+        private const string JSON_CONTENT_TYPE = "application/json";
+        private const string FORM_CONTENT_TYPE = "application/x-www-form-urlencoded";
+        private const string UTF8_ENCODING = "utf-8";
+
+        // Constants for Divoom commands
+        private const string UPDATE_PC_INFO_COMMAND = "Device/UpdatePCParaInfo";
+        private const string SET_CLOCK_SELECT_COMMAND = "Channel/SetClockSelectId";
+        private const int DEFAULT_CLOCK_ID = 625;
+        private const int TIME_GATE_HARDWARE_ID = 400;
+
+        // Constants for value formatting
+        private const string DEFAULT_VALUE = "--";
+        private const string CELSIUS_SUFFIX = "°C";
+        private const string PERCENT_SUFFIX = "%";
+        private const int MAX_PERCENT_LENGTH = 2;
+
+        // Constants for UI
+        private const string CPU_TEMP_PREFIX = "CpuTemp:";
+        private const string CPU_USE_PREFIX = "CpuUse:";
+        private const string GPU_TEMP_PREFIX = "GpuTemp:";
+        private const string GPU_USE_PREFIX = "GpuUse:";
+        private const string HDD_USE_PREFIX = "HddUse:";
+
+        // Private class fields
+        private UpdateVisitor _updateVisitor;
+        private Computer _computer;
+        private string _deviceIpAddr;
+        private DivoomDeviceList _localList;
+        private int _selectLcdId;
+
         public DivoomPCMontiorForm()
         {
             InitializeComponent();
 
-            UpdateVisitor = new UpdateVisitor();
-            Computer = new Computer
+            _updateVisitor = new UpdateVisitor();
+            _computer = new Computer
             {
                 HDDEnabled = false
             };
-            Computer.Open();
+            _computer.Open();
 
             LCDMsg.Visible = false;
             LCDList.Visible = false;
             DivoomUpdateDeviceList();
         }
-        public static int HttpPost(string url, string sendData, out string reslut)
+
+        /// <summary>
+        /// Sends HTTP POST request to the specified URL
+        /// </summary>
+        /// <param name="url">URL for the request</param>
+        /// <param name="sendData">Data to send</param>
+        /// <param name="result">Request result</param>
+        /// <returns>0 on success, -1 on error</returns>
+        public static int HttpPost(string url, string sendData, out string result)
         {
-            reslut = "";
+            result = string.Empty;
 
             try
             {
                 var data = Encoding.UTF8.GetBytes(sendData);
-                HttpWebRequest wbRequest = (HttpWebRequest)WebRequest.Create(url);
-                wbRequest.Proxy = null;
-                wbRequest.Method = "POST";
-                wbRequest.ContentType = "application/json";
-                wbRequest.ContentLength = data.Length;
-                wbRequest.Timeout = 1000;
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Proxy = null;
+                request.Method = "POST";
+                request.ContentType = JSON_CONTENT_TYPE;
+                request.ContentLength = data.Length;
+                request.Timeout = HTTP_TIMEOUT;
 
-                using (Stream wStream = wbRequest.GetRequestStream())
+                using (Stream requestStream = request.GetRequestStream())
                 {
-                    wStream.Write(data, 0, data.Length);
+                    requestStream.Write(data, 0, data.Length);
                 }
 
-                var wbResponse = (HttpWebResponse)wbRequest.GetResponse();
-                using (Stream responseStream = wbResponse.GetResponseStream())
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (Stream responseStream = response.GetResponseStream())
+                using (StreamReader reader = new StreamReader(responseStream, Encoding.UTF8))
                 {
-                    using (StreamReader sReader = new StreamReader(responseStream, Encoding.UTF8))
-                    {
-                        reslut = sReader.ReadToEnd();
-                    }
+                    result = reader.ReadToEnd();
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                reslut = e.Message;
+                result = ex.Message;
                 return -1;
             }
+            
             return 0;
         }
 
+        /// <summary>
+        /// Sends HTTP POST request with form data
+        /// </summary>
+        /// <param name="url">URL for the request</param>
+        /// <param name="postDataStr">Form data</param>
+        /// <returns>Server response</returns>
         public static string HttpPost2(string url, string postDataStr)
         {
             var request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentType = FORM_CONTENT_TYPE;
             Encoding encoding = Encoding.UTF8;
             byte[] postData = encoding.GetBytes(postDataStr);
             request.ContentLength = postData.Length;
-            Stream myRequestStream = request.GetRequestStream();
-            myRequestStream.Write(postData, 0, postData.Length);
-            myRequestStream.Close();
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Stream myResponseStream = response.GetResponseStream();
-            StreamReader myStreamReader = new StreamReader(myResponseStream, encoding);
-            string retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            myResponseStream.Close();
-
-            return retString;
+            
+            using (Stream requestStream = request.GetRequestStream())
+            {
+                requestStream.Write(postData, 0, postData.Length);
+            }
+            
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream responseStream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(responseStream, encoding))
+            {
+                return reader.ReadToEnd();
+            }
         }
 
+        /// <summary>
+        /// Performs HTTP GET request
+        /// </summary>
+        /// <param name="url">URL for the request</param>
+        /// <returns>Server response</returns>
         public static string HttpGet(string url)
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Stream myResponseStream = response.GetResponseStream();
-            StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.GetEncoding("utf-8"));
-            string retString = myStreamReader.ReadToEnd();
-            myStreamReader.Close();
-            myResponseStream.Close();
-            return retString;
+            
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream responseStream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(responseStream, Encoding.GetEncoding(UTF8_ENCODING)))
+            {
+                return reader.ReadToEnd();
+            }
         }
 
-        private void DivoomSendHttpInfo(object sender, EventArgs e)
+        /// <summary>
+        /// Gets formatted temperature value for the specified hardware types
+        /// </summary>
+        private string GetFormattedTemperature(params HardwareType[] hardwareTypes)
         {
+            var formattedTemperature = DEFAULT_VALUE;
             try
             {
-                Computer.Accept(UpdateVisitor);
+                var hardware = _computer.Hardware.FirstOrDefault(x => hardwareTypes.Contains(x.HardwareType));
+                if (hardware == null)
+                {
+                    return formattedTemperature;
+                }
+
+                var tempSensors = hardware.Sensors.Where(x => x.SensorType == SensorType.Temperature);
+                if (!tempSensors.Any())
+                {
+                    return formattedTemperature;
+                }
+
+                var temperature = Math.Round(tempSensors.Average(x => (decimal)x.Value));
+                return $"{temperature}{CELSIUS_SUFFIX}";
             }
             catch
             {
-                return;
+                return formattedTemperature;
             }
+        }
 
-            if (DeviceIPAddr == null || LocalList == null || LocalList.DeviceList == null || LocalList.DeviceList.Length == 0)
+        /// <summary>
+        /// Gets formatted usage value for the specified hardware types
+        /// </summary>
+        private string GetFormattedUsage(params HardwareType[] hardwareTypes)
+        {
+            var formattedUsage = DEFAULT_VALUE;
+            try
             {
-                return;
-
-            }
-            string CpuTemp_value = "--", CpuUse_value = "--", GpuTemp_value = "--", GpuUse_value = "--", HardDiskUse_value = "--";
-
-            DivoomDevicePostList PostInfo = new DivoomDevicePostList();
-            DivoomDevicePostItem PostItem = new DivoomDevicePostItem();
-            PostInfo.Command = "Device/UpdatePCParaInfo";
-            PostInfo.ScreenList = new DivoomDevicePostItem[1];
-            PostItem.DispData = new string[6];
-
-            if (DeviceIPAddr.Length > 0 && Computer != null)
-            {
-                PostItem.LcdId = SelectLCDID;
-              
-                for (int i = 0; i < Computer.Hardware.Length; i++)
+                var hardware = _computer.Hardware.FirstOrDefault(x => hardwareTypes.Contains(x.HardwareType));
+                if (hardware == null)
                 {
-                    if (Computer.Hardware[i].HardwareType == HardwareType.CPU)
-                    {
-                        for (int j = 0; j < Computer.Hardware[i].Sensors.Length; j++)
-                        {
- 
-                            if (Computer.Hardware[i].Sensors[j].SensorType == SensorType.Temperature)
-                            {
-                                CpuTemp_value = Computer.Hardware[i].Sensors[j].Value.ToString();
-                                CpuTemp_value += "C";
-                            }
-                            else if (Computer.Hardware[i].Sensors[j].SensorType == SensorType.Load)
-                            {
-                                CpuUse_value = Computer.Hardware[i].Sensors[j].Value.ToString();
-                                if (CpuUse_value.Length > 2)
-                                {
-                                    CpuUse_value = CpuUse_value.Substring(0, 2);
-                                }
-                                CpuUse_value += "%";
-                            }
-                        }
-                    }
-                    else if (Computer.Hardware[i].HardwareType == HardwareType.GpuNvidia ||
-                        Computer.Hardware[i].HardwareType == HardwareType.GpuAti)
-                    {
-                        for (int j = 0; j < Computer.Hardware[i].Sensors.Length; j++)
-                        {
-                            if (Computer.Hardware[i].Sensors[j].SensorType == SensorType.Temperature)
-                            {
-                                GpuTemp_value = Computer.Hardware[i].Sensors[j].Value.ToString();
-                                GpuTemp_value += "C";
-                            }
-                            else if (Computer.Hardware[i].Sensors[j].SensorType == SensorType.Load)
-                            {
-                                GpuUse_value = Computer.Hardware[i].Sensors[j].Value.ToString();
-                                if (GpuUse_value.Length > 2)
-                                {
-                                    GpuUse_value = GpuUse_value.Substring(0, 2);
-                                }
-                                GpuUse_value += "%";
-                            }
-                        }
-                    }
-                    else if (Computer.Hardware[i].HardwareType == HardwareType.HDD)
-                    {
-                        for (int j = 0; j < Computer.Hardware[i].Sensors.Length; j++)
-                        {
-                            if (Computer.Hardware[i].Sensors[j].SensorType == SensorType.Temperature)
-                            {
-                                HardDiskUse_value = Computer.Hardware[i].Sensors[j].Value.ToString();
-                                HardDiskUse_value += "C";
-                                break;
-                            }
-                        }
-                    }
+                    return formattedUsage;
                 }
 
-                MEMORYSTATUSEX memInfo = new MEMORYSTATUSEX
+                var loadSensors = hardware.Sensors.Where(x => x.SensorType == SensorType.Load);
+                var loadSensor = hardware.HardwareType == HardwareType.CPU 
+                    ? loadSensors.LastOrDefault()
+                    : loadSensors.FirstOrDefault();
+
+                if (loadSensor == null)
+                {
+                    return formattedUsage;
+                }
+
+                var usage = loadSensor.Value.ToString();
+                if (usage.Length > MAX_PERCENT_LENGTH)
+                {
+                    usage = usage.Substring(0, MAX_PERCENT_LENGTH);
+                }
+                return $"{usage}{PERCENT_SUFFIX}";
+            }
+            catch
+            {
+                return formattedUsage;
+            }
+        }
+
+        /// <summary>
+        /// Gets formatted CPU temperature value
+        /// </summary>
+        private string GetCpuTemperature() => GetFormattedTemperature(HardwareType.CPU);
+
+        /// <summary>
+        /// Gets formatted GPU temperature value
+        /// </summary>
+        private string GetGpuTemperature() => GetFormattedTemperature(HardwareType.GpuNvidia, HardwareType.GpuAti);
+
+        /// <summary>
+        /// Gets formatted HDD temperature value
+        /// </summary>
+        private string GetHddTemperature() => GetFormattedTemperature(HardwareType.HDD);
+
+        /// <summary>
+        /// Gets formatted CPU usage value
+        /// </summary>
+        private string GetCpuUsage() => GetFormattedUsage(HardwareType.CPU);
+
+        /// <summary>
+        /// Gets formatted GPU usage value
+        /// </summary>
+        private string GetGpuUsage() => GetFormattedUsage(HardwareType.GpuNvidia, HardwareType.GpuAti);
+
+        /// <summary>
+        /// Gets formatted RAM usage value
+        /// </summary>
+        private string GetRamUsage()
+        {
+            try
+            {
+                var memInfo = new MEMORYSTATUSEX
                 {
                     dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX))
                 };
 
                 GlobalMemoryStatusEx(ref memInfo);
 
-                PostItem.DispData[2] = CpuTemp_value;
-                PostItem.DispData[0] = CpuUse_value;
-                PostItem.DispData[3] = GpuTemp_value;
-                PostItem.DispData[1] = GpuUse_value;
-                PostItem.DispData[5] = HardDiskUse_value;
-                PostInfo.ScreenList[0] = PostItem;
-                CpuTemp.Text = "CpuTemp:" + CpuTemp_value;
-                CpuUse.Text = "CpuUse:" + CpuUse_value;
-                GpuTemp.Text = "GpuTemp:" + GpuTemp_value;
-                GpuUse.Text = "GpuUse:" + GpuUse_value;
-                HddUse.Text = "HddUse:" + HardDiskUse_value;
-        
-                string para_info = JsonConvert.SerializeObject(PostInfo);
-
-                HttpPost("http://" + DeviceIPAddr + ":80/post", para_info, out _);
+                var usagePercent = (memInfo.ullTotalPhys - memInfo.ullAvailPhys) * 100 / memInfo.ullTotalPhys;
+                var usage = usagePercent.ToString();
+                if (usage.Length > MAX_PERCENT_LENGTH)
+                {
+                    usage = usage.Substring(0, MAX_PERCENT_LENGTH);
+                }
+                return $"{usage}{PERCENT_SUFFIX}";
+            }
+            catch
+            {
+                return DEFAULT_VALUE;
             }
         }
+
+        /// <summary>
+        /// Sends system information to the Divoom device
+        /// </summary>
+        private void DivoomSendHttpInfo(object sender, EventArgs e)
+        {
+            try
+            {
+                _computer.Accept(_updateVisitor);
+            }
+            catch
+            {
+                return;
+            }
+
+            if (_deviceIpAddr == null || _localList == null || _localList.DeviceList == null || _localList.DeviceList.Length == 0)
+            {
+                return;
+            }
+            
+
+            var postInfo = new DivoomDevicePostList();
+            var postItem = new DivoomDevicePostItem();
+            postInfo.Command = UPDATE_PC_INFO_COMMAND;
+            postInfo.ScreenList = new DivoomDevicePostItem[1];
+            postItem.DispData = new string[6];
+
+            if (_deviceIpAddr.Length <= 0 || _computer == null)
+            {
+                return;
+            }
+            
+            postItem.LcdId = _selectLcdId;
+
+            var cpuTempValue = GetCpuTemperature();
+            var cpuUseValue = GetCpuUsage();
+            var gpuTempValue = GetGpuTemperature();
+            var gpuUseValue = GetGpuUsage();
+            var hardDiskUseValue = GetHddTemperature();
+            var ramUseValue = GetRamUsage();
+
+            postItem.DispData[0] = cpuUseValue;
+            postItem.DispData[1] = gpuUseValue;
+            postItem.DispData[2] = cpuTempValue;
+            postItem.DispData[3] = gpuTempValue;
+            postItem.DispData[4] = ramUseValue;
+            postItem.DispData[5] = hardDiskUseValue;
+            postInfo.ScreenList[0] = postItem;
+            
+            CpuTemp.Text = $"{CPU_TEMP_PREFIX}{cpuTempValue}";
+            CpuUse.Text = $"{CPU_USE_PREFIX}{cpuUseValue}";
+            GpuTemp.Text = $"{GPU_TEMP_PREFIX}{gpuTempValue}";
+            GpuUse.Text = $"{GPU_USE_PREFIX}{gpuUseValue}";
+            HddUse.Text = $"{HDD_USE_PREFIX}{hardDiskUseValue}";
+    
+            string paraInfo = JsonConvert.SerializeObject(postInfo);
+
+            HttpPost($"{HTTP_PROTOCOL}{_deviceIpAddr}{HTTP_PORT}{POST_ENDPOINT}", paraInfo, out _);
+        }
+
+        /// <summary>
+        /// Updates the list of Divoom devices in the local network
+        /// </summary>
         private void DivoomUpdateDeviceList()
         {
-            int i;
-            string urlInfo = "http://app.divoom-gz.com/Device/ReturnSameLANDevice";
-            string device_list = HttpGet(urlInfo);
-            LocalList = JsonConvert.DeserializeObject<DivoomDeviceList>(device_list);
+            string urlInfo = $"{BASE_API_URL}{DEVICE_LIST_ENDPOINT}";
+            string deviceList = HttpGet(urlInfo);
+            _localList = JsonConvert.DeserializeObject<DivoomDeviceList>(deviceList);
             divoomList.Items.Clear();
-            for (i = 0; LocalList.DeviceList != null && i < LocalList.DeviceList.Length; i++)
+            
+            if (_localList?.DeviceList != null)
             {
-                divoomList.Items.Add(LocalList.DeviceList[i].DeviceName);
+                for (int i = 0; i < _localList.DeviceList.Length; i++)
+                {
+                    divoomList.Items.Add(_localList.DeviceList[i].DeviceName);
+                }
             }
-
         }
+
+        /// <summary>
+        /// Handler for the refresh list button click
+        /// </summary>
         private void RefreshList_Click(object sender, EventArgs e)
         {
             DivoomUpdateDeviceList();
@@ -242,24 +375,28 @@ namespace DivoomPCMontiorTool
 
         [DllImport("kernel32.dll")]
         public static extern void GlobalMemoryStatusEx(ref MEMORYSTATUSEX stat);
+
+        /// <summary>
+        /// Sends the clock selection command to the Divoom device
+        /// </summary>
         private void DivoomSendSelectClock()
         {
-            DeviceIPAddr = LocalList.DeviceList[divoomList.SelectedIndex].DevicePrivateIP;
+            _deviceIpAddr = _localList.DeviceList[divoomList.SelectedIndex].DevicePrivateIP;
 
-            if (LocalList.DeviceList[divoomList.SelectedIndex].Hardware == 400)
+            int lcdIndependenceResult = 0;
+            if (_localList.DeviceList[divoomList.SelectedIndex].Hardware == TIME_GATE_HARDWARE_ID)
             {
-                string url_info = "http://app.divoom-gz.com/Channel/Get5LcdInfoV2?DeviceType=LCD&DeviceId=" + LocalList.DeviceList[divoomList.SelectedIndex].DeviceId;
-                string independenceStr = HttpGet(url_info);
-                if (independenceStr != null && independenceStr.Length > 0)
+                string urlInfo = $"{BASE_API_URL}{LCD_INFO_ENDPOINT}?DeviceType=LCD&DeviceId={_localList.DeviceList[divoomList.SelectedIndex].DeviceId}";
+                string independenceStr = HttpGet(urlInfo);
+                
+                if (!string.IsNullOrEmpty(independenceStr))
                 {
-                    DivoomTimeGateIndependenceInfo IndependenceInfo = JsonConvert.DeserializeObject<DivoomTimeGateIndependenceInfo>(independenceStr);
-
-                    LcdIndependence = IndependenceInfo.LcdIndependence;
-
+                    var independenceInfo = JsonConvert.DeserializeObject<DivoomTimeGateIndependenceInfo>(independenceStr);
+                    lcdIndependenceResult = independenceInfo.LcdIndependence;
                 }
+                
                 LCDMsg.Visible = true;
                 LCDList.Visible = true;
-
             }
             else
             {
@@ -267,38 +404,46 @@ namespace DivoomPCMontiorTool
                 LCDList.Visible = false;
             }
 
-            DivoomDeviceSelectClockInfo PostInfo = new DivoomDeviceSelectClockInfo();
+            var postInfo = new DivoomDeviceSelectClockInfo
+            {
+                LcdIndependence = lcdIndependenceResult,
+                Command = SET_CLOCK_SELECT_COMMAND,
+                LcdIndex = LCDList.SelectedIndex,
+                ClockId = DEFAULT_CLOCK_ID
+            };
 
-            PostInfo.LcdIndependence = LcdIndependence;
-            PostInfo.Command = "Channel/SetClockSelectId";
-            PostInfo.LcdIndex = this.LCDList.SelectedIndex;
-            PostInfo.ClockId = 625;
-
-            string postInfoRequest = JsonConvert.SerializeObject(PostInfo);
-            HttpPost("http://" + DeviceIPAddr + ":80/post", postInfoRequest, out _);
-
+            string postInfoRequest = JsonConvert.SerializeObject(postInfo);
+            HttpPost($"{HTTP_PROTOCOL}{_deviceIpAddr}{HTTP_PORT}{POST_ENDPOINT}", postInfoRequest, out _);
         }
+
+        /// <summary>
+        /// Handler for the selected Divoom device change
+        /// </summary>
         private void DivoomList_SelectedIndexChanged(object sender, EventArgs e)
         {
             DivoomSendSelectClock();
         }
 
+        /// <summary>
+        /// Handler for the selected LCD screen change
+        /// </summary>
         private void LCDList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string raw_value = this.LCDList.SelectedItems[0].ToString();
-            SelectLCDID = Convert.ToInt32(raw_value) - 1;
+            string rawValue = LCDList.SelectedItems[0].ToString();
+            _selectLcdId = Convert.ToInt32(rawValue) - 1;
 
-            if(LocalList != null && LocalList.DeviceList!=null && LocalList.DeviceList.Count() > 0)
+            if (_localList?.DeviceList != null && _localList.DeviceList.Any())
             {
-                if (divoomList.SelectedIndex > 0 && this.divoomList.SelectedIndex < LocalList.DeviceList.Count())
+                if (divoomList.SelectedIndex > 0 && divoomList.SelectedIndex < _localList.DeviceList.Count())
                 {
                     DivoomSendSelectClock();
                 }
-
             }
-
-
         }
+
+        /// <summary>
+        /// Handler for the process exit event
+        /// </summary>
         public void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
             Console.WriteLine("exit");
