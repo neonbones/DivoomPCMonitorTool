@@ -1,0 +1,13 @@
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\bin\Debug\DivoomPCMonitorTool.exe.config
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\bin\Debug\DivoomPCMonitorTool.exe
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\bin\Debug\DivoomPCMonitorTool.pdb
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\bin\Debug\Newtonsoft.Json.dll
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\bin\Debug\Newtonsoft.Json.xml
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\obj\Debug\DivoomPCMonitorTool.csproj.AssemblyReference.cache
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\obj\Debug\DivoomPCMontiorTool.DivoomPCMontiorForm.resources
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\obj\Debug\DivoomPCMonitorTool.Properties.Resources.resources
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\obj\Debug\DivoomPCMonitorTool.csproj.GenerateResource.cache
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\obj\Debug\DivoomPCMonitorTool.csproj.CoreCompileInputs.cache
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\obj\Debug\DivoomPC.2BABA7A6.Up2Date
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\obj\Debug\DivoomPCMonitorTool.exe
+D:\Divoom\DivoomPCMonitorTool\DivoomPCMonitorTool\DivoomPCMontiorTool\obj\Debug\DivoomPCMonitorTool.pdb
